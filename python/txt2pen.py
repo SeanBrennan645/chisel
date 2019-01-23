@@ -461,8 +461,88 @@ def checkLight (p, l, lightCount):
 
 
 def introduceLights (topleft, p, mapGrid, walls, doors):
-    # your code goes here
-    return [] # and replaces this line
+    global debuging
+    if debugging:
+        print "scanning room, start pos in room = ", p
+    s = addVec (p, [0, 0])
+    a = addVec (p, [-1, -1])
+    d = 1  # 0 up, 1 right, 2 down, 3 left
+    leftVec = [[-1, 0], [0, -1], [1, 0], [0, 1]]
+    forwardVec = [[0, -1], [1, 0], [0, 1], [-1, 0]]
+    if debugging:
+        print "wall corner", p
+    lightCount = 0 #used to keep track of light freq
+    lights = [] #stores all light objects to be made
+    door = False #used so doors aren't blocked by lights
+
+    doorStartPoint = None
+    doorEndPoint = None
+    while True:
+        if debugging:
+            print "point currently at", p, d
+        if (doorStartPoint == None) and lookingLeft (p, leftVec[d], mapGrid, '. '):
+            if debugging:
+                print "seen first point", p
+            # first point on the wall is a door
+            doorStartPoint = addVec (p, leftVec[d])
+            doorEndPoint = doorStartPoint
+            door = True #preventing light from being added in door
+        if lookingLeft (addVec (p, forwardVec[d]), leftVec[d], mapGrid, '. '):
+            if debugging:
+                print "seen a door point", p,
+            if doorStartPoint == None:
+                doorStartPoint = addVec (addVec (p, forwardVec[d]), leftVec[d])
+            doorEndPoint = addVec (addVec (p, forwardVec[d]), leftVec[d])
+            door = True #preventing light from being added in door
+        else:
+            # end of door?
+            if doorEndPoint != None:
+                doors += [[doorStartPoint, doorEndPoint]]
+                doorStartPoint = None
+                doorEndPoint = None
+                door = True #preventing light from being added in door
+        if lookingLeft (addVec (p, forwardVec[d]), leftVec[d], mapGrid, 'x '):
+            # carry on
+            if door:#if a door a floor light is added instead of a pillar light
+                li = light()
+                li.settype ('FLOOR')
+                lights += [p + [li]]
+            else:#
+                lights, lightCount = checkLight (p, lights, lightCount)
+            door = False
+            p = addVec (p, forwardVec[d])
+        elif lookingLeft (addVec (p, forwardVec[d]), leftVec[d], mapGrid, 'x.'):
+            if debugging:
+                print "wall corner (x.)", p
+            doorStartPoint = None
+            doorEndPoint = None
+            # turn right
+            d = (d + 1) % 4
+
+            if s == p:
+                # back to the start
+                return lights
+        elif lookingLeft (addVec (p, forwardVec[d]), leftVec[d], mapGrid, 'xx'):
+            if debugging:
+                print "wall corner (xx)", p
+            doorStartPoint = None
+            doorEndPoint = None
+            # turn right
+            d = (d + 1) % 4
+            if s == p:
+                # back to the start
+                return lights
+        elif lookingLeft (addVec (p, forwardVec[d]), leftVec[d], mapGrid, '  '):
+            if debugging:
+                print "wall corner (  )", p,
+            # turn left
+            p = addVec (p, forwardVec[d])
+            d = (d + 3) % 4
+            if s == p:
+                # back to the start
+                return llights
+        else:
+            error ("scanning room at %s has gone wrong, maybe the room is too small\n", p)
 
 def printCoord (c, o):
     global maxy

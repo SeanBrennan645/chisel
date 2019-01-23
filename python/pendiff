@@ -1,0 +1,55 @@
+diff --git a/python/pen2map.py b/python/pen2map.py
+index 0d2514d..7a6f86e 100644
+--- a/python/pen2map.py
++++ b/python/pen2map.py
+@@ -2173,26 +2173,26 @@ def makeBeamX (x, y0, y1, h):
+     if debugging:
+         print "beamX", x, y0, y1, h
+     for y in range (y0+1, y1):
+-        pos = [x, y, h]
++        pos = [x, y, h + 0.5]
+         size = [0.5, 1.0, 0.5]
+         if debugging:
+             print "beamX block", x, y, h
+         newcuboid (pos, size, 'ceiling')
+-    beamSupport (x, y0+1.0, h-0.5)
+-    beamSupport (x, y1-0.5, h-0.5)
++    beamSupport (x, y0+1.0, h)
++    beamSupport (x, y1-0.5, h)
+ 
+ 
+ def makeBeamY (x0, x1, y, h):
+     if debugging:
+         print "beamY", x0, x1, y, h
+     for x in range (x0+1, x1):
+-        pos = [x, y, h]
++        pos = [x, y, h + 0.5]
+         size = [1.0, 0.5, 0.5]
+         if debugging:
+             print "beamY block", x, y, h
+         newcuboid (pos, size, 'ceiling')
+-    beamSupport (x0+1.0, y, h-0.5)
+-    beamSupport (x1-0.5, y, h-0.5)
++    beamSupport (x0+1.0, y, h)
++    beamSupport (x1-0.5, y, h)
+ 
+ 
+ def makeCandleX (r, x, y0, y1, h):
+@@ -2273,7 +2273,7 @@ def generateBeams (r, e):
+                 print w0, w1
+             for x in range (w0[0][0]+1, w0[1][0], 2):
+                 if (not onDoor (r, x, y0)) and (not onDoor (r, x, y1)):
+-                    makeBeamX (x, y0, y1, rooms[r].floorLevel+minCeilingHeight-1)
++                    makeBeamX (x, y0, y1, rooms[r].floorLevel+minCeilingHeight-1)#changes heights of beams
+             for x in range (w0[0][0]+2, w0[1][0], 2):
+                 if (not onDoor (r, x, y0)) and (not onDoor (r, x, y1)):
+                     makeCandleX (r, x, y0, y1, rooms[r].floorLevel+minCeilingHeight-2)
+@@ -2292,7 +2292,7 @@ def generateBeams (r, e):
+                 print w0, w1
+             for y in range (w0[0][1]+1, w0[1][1], 2):
+                 if (not onDoor (r, x0, y)) and (not onDoor (r, x1, y)):
+-                    makeBeamY (x0, x1, y, rooms[r].floorLevel+minCeilingHeight-1)
++                    makeBeamY (x0, x1, y, rooms[r].floorLevel+minCeilingHeight-1)#changes heights of beams
+             for y in range (w0[0][1]+2, w0[1][1], 2):
+                 if (not onDoor (r, x0, y)) and (not onDoor (r, x1, y)):
+                     makeCandleY (r, x0, x1, y, rooms[r].floorLevel+minCeilingHeight-2)
